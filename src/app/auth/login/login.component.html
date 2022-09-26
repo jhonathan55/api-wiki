@@ -11,14 +11,15 @@
 
         <mat-form-field class="full-width-input separator" color="accent">
           <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password" required [class]="isValidField('password')" />
+          <input matInput [type]="hide? 'password': 'text'" formControlName="password" required [class]="isValidField('password')" />
+         <button type="button" mat-icon-button matSuffix (click)="hide=!hide">
+            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
           <mat-error *ngIf="loginForm.get('password')?.errors">Contraseña es requerida</mat-error>
         </mat-form-field>
 
         <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">Login</button>
       </form>
-
-      
     </mat-card-content>
   </mat-card>
 </div>

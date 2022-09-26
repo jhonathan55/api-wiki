@@ -13,8 +13,10 @@ import {MatInputModule} from '@angular/material/input';
 import {MatCardModule} from '@angular/material/card';
 //reactive forms
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+//http client
+import { HttpClientModule } from '@angular/common/http';
 const MATERIAL_MODULES = [
+  HttpClientModule,
   MatGridListModule,
   MatSidenavModule,
   MatToolbarModule,

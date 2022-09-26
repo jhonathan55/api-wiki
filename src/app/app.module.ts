@@ -8,8 +8,9 @@ import { MaterialModule } from './modules/material/material.module';
 import { ToolbarComponent } from './shared/toolbar/toolbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { ShearchModule } from './pages/shearch/shearch.module';
-import { HttpClientModule } from '@angular/common/http';
+
 import { ArticlesComponent } from './pages/articles/articles.component';
+import { AuthInterceptorProvider } from './auth/interceptors/cookies.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,10 +23,10 @@ import { ArticlesComponent } from './pages/articles/articles.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
-    ShearchModule,
-    HttpClientModule
+    ShearchModule
+   
   ],
-  providers: [],
+  providers: [AuthInterceptorProvider],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
