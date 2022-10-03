@@ -10,15 +10,21 @@ import {
 import { catchError, Observable } from 'rxjs';
 import { throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class CookiesInterceptor implements HttpInterceptor {
 
-  constructor() { }
+  constructor(
+    private authSvc:AuthService,
+    private router:Router
+  ) { }
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = localStorage.getItem('token')?.toString();
     console.log(token);
+    
     if (token) {
       req = req.clone({
         headers: req.headers.set('token', token)
@@ -56,11 +62,8 @@ export class CookiesInterceptor implements HttpInterceptor {
         console.log('No autorizado');
         break;
       default:
-        Swal.fire(
-          'Good job!',
-          'Problemas con el server!',
-          'success'
-        )
+       console.log('No autorizado');
+       
         break;
     }
     return throwError(()=>error)

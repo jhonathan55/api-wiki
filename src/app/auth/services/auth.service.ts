@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import Swal from 'sweetalert2';
 import { UserI, UserResponseI } from '../interfaces/user';
-
+//helper
+import { JwtHelperService } from '@auth0/angular-jwt';
 @Injectable({
   providedIn: 'root'
 })
@@ -14,11 +14,14 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router
-  ) { }
+  ) {
+    this.checkToken().subscribe();
   
-  get isLogged(): Observable<boolean>{
+   }
+
+  get isLogged(): Observable<boolean> {
     return this.loggedIn.asObservable();
-  }  
+  }
   private readonly TOKEN = 'token';
   login(user: UserI): Observable<UserResponseI | void> {
     return this.http.post<UserResponseI>(environment.baseUrl + '/auth/login', user)
@@ -29,7 +32,6 @@ export class AuthService {
           return user;
         }
         ))
-
   }
 
   private saveToken(user: UserResponseI) {
@@ -38,16 +40,29 @@ export class AuthService {
     localStorage.setItem('user', JSON.stringify(rest));
   }
 
-  logout():void {
+  logout(): void {
     localStorage.removeItem(this.TOKEN);
     localStorage.removeItem('user');
     this.loggedIn.next(false);
-    Swal.fire(
-      'Good job!',
-      'You clicked the button!',
-      'success'
-    )
-    this.router.navigate(['/auth/login']);
+
+    this.router.navigate(['./login']);
+  }
+
+  checkToken(): Observable<boolean> {
+    const token = localStorage.getItem(this.TOKEN);
+    const helper = new JwtHelperService();
+    if (!token) {
+      this.logout();
+      return new Observable<boolean>();
+    }
+    const isExpired = helper.isTokenExpired(token);
+    if (isExpired) {
+
+      this.logout();
+      return new Observable<boolean>();
+    }
+    this.loggedIn.next(true);
+    return new Observable<boolean>();
   }
 
 }

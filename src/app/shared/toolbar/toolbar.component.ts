@@ -1,4 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -7,13 +9,21 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 })
 export class ToolbarComponent implements OnInit {
 
+  isLogged = this.authSvc.isLogged;
   @Output() toggleSidenav = new EventEmitter<void>();
-  constructor() { }
+  constructor(
+    private authSvc: AuthService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
   }
 
   onToggleSidenav() {
     this.toggleSidenav.emit();
+  }
+  onLogout(){
+    this.authSvc.logout();
+   
   }
 }

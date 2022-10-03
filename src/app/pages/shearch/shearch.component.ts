@@ -25,10 +25,10 @@ export class ShearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.onChange();
-    this.sherchSvc.getSearch('angular').subscribe(res => {
-      console.log(res);
-    }
-    );
+    // this.sherchSvc.getSearch('angular').subscribe(res => {
+    //   console.log(res);
+    // }
+    // );
     
   }
   /*onChange() {
