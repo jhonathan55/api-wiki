@@ -2,9 +2,7 @@
     <button mat-icon-button (click)="onToggleSidenav()">
         <mat-icon>menu</mat-icon>
     </button>
-
     <span class="example-spacer"></span>
-
     <a *ngIf="isLogged | async;else viewLogout" mat-icon-button (click)="onLogout()">
         <mat-icon>
             <span class="material-symbols-outlined">
@@ -22,8 +20,4 @@
             </mat-icon>
         </a>
     </ng-template>
-
-
-
-
 </mat-toolbar>

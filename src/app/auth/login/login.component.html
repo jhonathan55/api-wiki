@@ -1,6 +1,8 @@
 <div class="login-form">
   <mat-card>
+    <!-- <button mat-raised-button  class="btn-google">Google</button> -->
     <mat-card-title>Login</mat-card-title>
+    
     <mat-card-content>
       <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
         <mat-form-field class="full-width-input separator" color="accent">
@@ -18,7 +20,7 @@
           <mat-error *ngIf="loginForm.get('password')?.errors">Contraseña es requerida</mat-error>
         </mat-form-field>
 
-        <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">Login</button>
+        <button mat-raised-button color="primary" type="submit" class="button" [disabled]="!loginForm.valid">Login</button>
       </form>
     </mat-card-content>
   </mat-card>

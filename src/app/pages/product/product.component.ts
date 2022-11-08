@@ -1,35 +1,46 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { ProductI } from './product';
+import { CategoryI, ProductI } from './product';
 import { ProductService } from './product.service';
-
 import Swal from 'sweetalert2';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { FormComponent } from './form/form.component';
+import { Subscription } from 'rxjs';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 @Component({
   selector: 'app-product',
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss']
 })
-export class ProductComponent implements OnInit {
+export class ProductComponent implements OnInit, OnDestroy,AfterViewInit {
 
   dataSource: any;
   displayedColumns: string[] = ['id', 'name', 'price', 'actions'];
+  private subscribe: Subscription = new Subscription();
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   constructor(
-    private productSvc: ProductService
-
+    private productSvc: ProductService,
+    private matDialog: MatDialog
   ) { }
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator._intl.itemsPerPageLabel = 'Productos por página';
+  }
+  ngOnDestroy(): void {
+    this.subscribe.unsubscribe();
+  }
 
   ngOnInit(): void {
-    this.productSvc.getAllProducts().subscribe(res => {
-      console.log(res);
-
-    });
-
     this.getProducts();
-    
   }
-  getProducts():void{
-    this.productSvc.getAllProducts().subscribe((products:ProductI[]) => {
+  getProducts(): void {
+    this.productSvc.getAllProducts().subscribe((products: ProductI[]) => {
       this.dataSource = new MatTableDataSource<ProductI>(products);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
     });
   }
   onDelete(id: string): void {
@@ -55,11 +66,77 @@ export class ProductComponent implements OnInit {
       }
     })
   }
+  onUpdateProduct(id:string,product: ProductI): void {
+    this.productSvc.updateProduct(id,product).subscribe(res => {
+      if (res) {
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Producto actualizado',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      this.getProducts();
+      }
+    })
+  }
+  onEdit(id: string): void {
+    this.productSvc.getById(id).subscribe((res:any) => {
+      let categoriesId:CategoryI[] = res.categories.map((res:ProductI)=>res.id);
+      console.log(categoriesId);
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.disableClose = true;
+      dialogConfig.autoFocus = true;
+      dialogConfig.data = {
+        name: res.name,
+        price: res.price,
+        categories: categoriesId,
+      }
+      const dialogRef = this.matDialog.open(FormComponent, dialogConfig);
+      dialogRef.afterClosed().subscribe((res:ProductI) => {
+        if (res) {
+          console.log(res);
+          
+          this.onUpdateProduct(id,res);
+        }
+      });
+    })
+  }
+  onNewProduct(product: ProductI): void {
+    this.subscribe?.add(
+      this.productSvc.newProduct(product).subscribe(res => {
+        if (res) {
+          Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Producto creado',
+            showConfirmButton: false,
+            timer: 1500
+          })
+          this.getProducts();
+        }
+      })
+    )
 
-  onEdit(id: number): void {
-    console.log(id);
+  }
+  openDialog(): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    const dialogRef = this.matDialog.open(FormComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.onNewProduct(res);
+      }
+    });
   }
 
- 
+
+
+
+
+
+
+
 
 }

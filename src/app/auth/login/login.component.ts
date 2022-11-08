@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit {
    const validatedField = this.loginForm.get(field);
    return (!validatedField?.valid && validatedField?.touched) ? 'is-invalid' : validatedField?.touched ? 'is-valid' : '';
   }
-
+  
 
 
 
